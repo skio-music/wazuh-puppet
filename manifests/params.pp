@@ -40,65 +40,7 @@ class wazuh::params {
       ]
 
       case $::osfamily {
-        'Debian': {
-
-          $agent_service  = 'wazuh-agent'
-          $agent_package  = 'wazuh-agent'
-          $service_has_status  = false
-          $ossec_service_provider = undef
-          $api_service_provider = undef
-
-          $default_local_files = {
-            '/var/log/syslog'                      => 'syslog',
-            '/var/log/kern.log'                    => 'syslog',
-            '/var/log/auth.log'                    => 'syslog',
-            '/var/log/mail.log'                    => 'syslog',
-            '/var/log/dpkg.log'                    => 'syslog',
-            '/var/ossec/logs/active-responses.log' => 'syslog',
-          }
-
-          case $::lsbdistcodename {
-            'xenial': {
-              $server_service = 'wazuh-manager'
-              $server_package = 'wazuh-manager'
-              $api_service = 'wazuh-api'
-              $api_package = 'wazuh-api'
-              $wodle_openscap_content = {
-                'ssg-ubuntu-1604-ds.xml' => {
-                  'type' => 'xccdf',
-                  profiles => ['xccdf_org.ssgproject.content_profile_common'],
-                },
-              }
-            }
-            'jessie': {
-              $server_service = 'wazuh-manager'
-              $server_package = 'wazuh-manager'
-              $api_service = 'wazuh-api'
-              $api_package = 'wazuh-api'
-              $wodle_openscap_content = {
-                'ssg-debian-8-ds.xml' => {
-                  'type' => 'xccdf',
-                  profiles => ['xccdf_org.ssgproject.content_profile_common'],
-                },
-                'cve-debian-oval.xml' => {
-                  'type' => 'oval',
-                }
-              }
-            }
-            /^(wheezy|stretch|sid|precise|trusty|vivid|wily|xenial)$/: {
-              $server_service = 'wazuh-manager'
-              $server_package = 'wazuh-manager'
-              $api_service = 'wazuh-api'
-              $api_package = 'wazuh-api'
-              $wodle_openscap_content = undef
-            }
-        default: {
-          fail("Module ${module_name} is not supported on ${::operatingsystem}")
-        }
-          }
-
-        }
-        'Linux', 'RedHat': {
+        'RedHat': {
 
           $agent_service  = 'wazuh-agent'
           $agent_package  = 'wazuh-agent'
@@ -126,94 +68,15 @@ class wazuh::params {
               # write/find a release-specific file.
               $wodle_openscap_content = undef
            }
-            'CentOS': {
-              if ( $::operatingsystemrelease =~ /^6.*/ ) {
-                $wodle_openscap_content = {
-                  'ssg-centos-6-ds.xml' => {
-                    'type' => 'xccdf',
-                    profiles => ['xccdf_org.ssgproject.content_profile_pci-dss', 'xccdf_org.ssgproject.content_profile_server',]
-                  }
-                }
-              }
-              if ( $::operatingsystemrelease =~ /^7.*/ ) {
-                $wodle_openscap_content = {
-                  'ssg-centos-7-ds.xml' => {
-                    'type' => 'xccdf',
-                    profiles => ['xccdf_org.ssgproject.content_profile_pci-dss', 'xccdf_org.ssgproject.content_profile_common',]
-                  }
-                }
-              }
-            }
-            /^(RedHat|OracleLinux)$/: {
-              if ( $::operatingsystemrelease =~ /^6.*/ ) {
-                $wodle_openscap_content = {
-                  'ssg-rhel-6-ds.xml' => {
-                    'type' => 'xccdf',
-                    profiles => ['xccdf_org.ssgproject.content_profile_pci-dss', 'xccdf_org.ssgproject.content_profile_server',]
-                  },
-                  'cve-redhat-6-ds.xml' => {
-                    'type' => 'xccdf',
-                  }
-                }
-              }
-              if ( $::operatingsystemrelease =~ /^7.*/ ) {
-                $wodle_openscap_content = {
-                  'ssg-rhel-7-ds.xml' => {
-                    'type' => 'xccdf',
-                    profiles => ['xccdf_org.ssgproject.content_profile_pci-dss', 'xccdf_org.ssgproject.content_profile_common',]
-                  },
-                  'cve-redhat-7-ds.xml' => {
-                    'type' => 'xccdf',
-                  }
-                }
-              }
-            }
-            'Fedora': {
-              if ( $::operatingsystemrelease =~ /^(23|24|25).*/ ) {
-                $wodle_openscap_content = {
-                  'ssg-fedora-ds.xml' => {
-                    'type' => 'xccdf',
-                    profiles => ['xccdf_org.ssgproject.content_profile_standard', 'xccdf_org.ssgproject.content_profile_common',]
-                  },
-                }
-              }
-            }
             default: {
-              $wodle_openscap_content = undef
-            # fail('This ossec module has not been tested on your distribution') 
+              fail('This ossec module has not been tested on Amazon Linux') 
             }
           }
         }
-        default: { #fail('This ossec module has not been tested on your distribution') 
-        }
+        default: { fail('This ossec module has not been tested on the Redhat Family') }
       }
     }
-    'windows': {
-      $config_file = regsubst(sprintf('c:/Program Files (x86)/ossec-agent/ossec.conf'), '\\\\', '/')
-      $shared_agent_config_file = regsubst(sprintf('c:/Program Files (x86)/ossec-agent/shared/agent.conf'), '\\\\', '/')
-      $config_owner = 'Administrator'
-      $config_group = 'Administrators'
-
-      $manage_firewall = false
-
-      $keys_file = regsubst(sprintf('c:/Program Files (x86)/ossec-agent/client.keys'), '\\\\', '/')
-      $keys_mode = '0440'
-      $keys_owner = 'Administrator'
-      $keys_group = 'Administrators'
-
-      $agent_service  = 'OssecSvc'
-      $agent_package  = 'Wazuh Agent 2.0'
-      $server_service = ''
-      $server_package = ''
-      $api_service = ''
-      $api_package = ''
-      $service_has_status  = true
-
-      # TODO
-      $validate_cmd_conf = undef
-      # Pushed by shared agent config now
-      $default_local_files = {}
-    }
-  default: { fail('This ossec module has not been tested on your distribution') }
+    
+  default: { fail('This ossec module has not been tested on your Linux Kernel') }
   }
 }
