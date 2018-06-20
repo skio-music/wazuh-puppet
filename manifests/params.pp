@@ -178,10 +178,14 @@ class wazuh::params {
                 }
               }
             }
-            default: { fail('This ossec module has not been tested on your distribution') }
+            default: {
+              $wodle_openscap_content = undef
+            # fail('This ossec module has not been tested on your distribution') 
+            }
           }
         }
-        default: { fail('This ossec module has not been tested on your distribution') }
+        default: { #fail('This ossec module has not been tested on your distribution') 
+        }
       }
     }
     'windows': {
