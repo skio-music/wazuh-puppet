@@ -64,36 +64,43 @@
         "Stretch",
         "Sid"
       ]
+    },
+    {
+      "operatingsystem": "Amazon",
+      "operatingsystemrelease": [
+        "2.7.1",
+        "3.0.0"
+      ]
     }
   ],
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
-      "version_range": ">= 1.0.0"
+      "version_range": ">= 4.25.1"
     },
     {
       "name": "puppetlabs/concat",
-      "version_range": ">= 1.0.0"
+      "version_range": ">= 4.2.1"
     },
     {
       "name": "stahnma/epel",
-      "version_range": ">= 1.0.0"
+      "version_range": ">= 1.3.0"
     },
     {
       "name": "puppetlabs/apt",
-      "version_range": ">= 2.0.0"
+      "version_range": ">= 4.5.1"
     },
     {
       "name": "puppet/selinux",
-      "version_range": ">= 0.8.0"
+      "version_range": ">= 1.5.2"
     },
     {
       "name": "puppet/nodejs",
       "version_range": ">= 3.0.0 < 4.0.0"
     },
     {
-      "name": "puppet/firewall",
-      "version_range": ">= 1.7.0"
+      "name": "puppetlabs/firewall",
+      "version_range": ">= 1.12.0"
     }
   ]
 }
