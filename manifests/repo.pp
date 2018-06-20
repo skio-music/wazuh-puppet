@@ -5,35 +5,7 @@ class wazuh::repo (
 ) {
 
   case $::osfamily {
-    'Debian' : {
-      if ! defined(Package['apt-transport-https']) {
-        ensure_packages(['apt-transport-https'], {'ensure' => 'present'})
-      }
-      # apt-key added by issue #34
-      apt::key { 'wazuh':
-        id     => '0DCFCA5547B19D2A6099506096B3EE5F29111145',
-        source => 'https://packages.wazuh.com/key/GPG-KEY-WAZUH',
-        server => 'pgp.mit.edu'
-      }
-      case $::lsbdistcodename {
-        /(jessie|wheezy|stretch|sid|precise|trusty|vivid|wily|xenial|yakketi)/: {
-
-          apt::source { 'wazuh':
-            ensure   => present,
-            comment  => 'This is the WAZUH Ubuntu repository',
-            location => 'https://packages.wazuh.com/3.x/apt',
-            release  => 'stable',
-            repos    => 'main',
-            include  => {
-              'src' => false,
-              'deb' => true,
-            },
-          }
-        }
-        default: { fail('This ossec module has not been tested on your distribution (or lsb package not installed)') }
-      }
-    }
-    'Linux', 'Redhat' : {
+    'Redhat' : {
         case $::os[name] {
           /^(CentOS|RedHat|OracleLinux|Fedora)$/: {
             if ( $::operatingsystemrelease =~ /^5.*/ ) {
@@ -66,6 +38,6 @@ class wazuh::repo (
         Class['epel'] -> Package['inotify-tools']
       }
     }
-    default: { fail('This ossec module has not been tested on your distribution') }
+    default: { fail('OSFamily issue in [repo.pp] for Amazon Linux') }
   }
 }
